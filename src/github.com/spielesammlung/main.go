@@ -5,32 +5,17 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/spielesammlung/cupboard"
+	"github.com/gorilla/mux"
 	"github.com/spielesammlung/games"
 )
 
 func main() {
-	db := cupboard.New("localhost")
-	defer db.Close()
-
-	game := cupboard.Game{
-		"Civilisation",
-		cupboard.MinMax{
-			Min: 2,
-			Max: 6,
-		},
-		cupboard.MinMax{
-			Min: 4,
-			Max: 6,
-		},
-		"Lars",
-		"Aufbau-/Strategie",
-	}
-
-	db.AddGame(game)
-
-	http.HandleFunc("/games", games.GameServer)
+	router := mux.NewRouter()
+	router.HandleFunc("/games", games.RetrieveGames).Methods("GET")
+	router.HandleFunc("/games/{id}", games.GetGame).Methods("GET")
+	router.HandleFunc("/games/{id}", games.CreateGame).Methods("POST")
+	router.HandleFunc("/games/{id}", games.DeleteGame).Methods("DELETE")
 	port := os.Getenv("PORT")
 	fmt.Printf("Starting Spielesammlung at Port: %s", port)
-	http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(":"+port, router)
 }

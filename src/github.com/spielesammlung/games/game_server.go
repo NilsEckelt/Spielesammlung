@@ -7,13 +7,17 @@ import (
 	"github.com/spielesammlung/cupboard"
 )
 
-func GameServer(w http.ResponseWriter, req *http.Request) {
+func RetrieveGames(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	cupboard := cupboard.New("localhost")
 	defer cupboard.Close()
 
-	games := cupboard.RetrieveGames()
-
-	json.NewEncoder(w).Encode(games)
+	if r.Method == "GET" {
+		games := cupboard.RetrieveGames()
+		json.NewEncoder(w).Encode(games)
+	}
 }
+func GetGame(w http.ResponseWriter, r *http.Request)    {}
+func CreateGame(w http.ResponseWriter, r *http.Request) {}
+func DeleteGame(w http.ResponseWriter, r *http.Request) {}

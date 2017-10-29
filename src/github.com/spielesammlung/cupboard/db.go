@@ -60,3 +60,8 @@ func (db *Db) RetrieveGames() []Game {
 
 	return result
 }
+func (db *Db) GetGame(id string) Game {
+	return Game{}
+}
+func (db *Db) CreateGame(id string) {}
+func (db *Db) DeleteGame(id string) {}
