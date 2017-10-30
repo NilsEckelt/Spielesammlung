@@ -12,10 +12,10 @@
             "remotePath": "",
             "port": 2345,
             "host": "127.0.0.1",
-            "program": "/Users/401189/Spielesammlung/src/github.com/spielesammlung/main.go",
+            "program": "/Users/401189/Spielesammlung/src/github.com/spielesammlung/cmd/game-collection-server/main.go",
             "env": {
                 "PORT": "54321",
-                "GOPATH": "/Users/401189/Spielesammlung/"
+                "GOPATH": "/Users/401189/Spielesammlung/:/Users/401189/Spielesammlung/vendor"
             },
             "args": [],
             "showLog": true

@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  title: Spielesammlung (game collection)
+  title: game collection
   description: |
     This service supports organising weekends playing (board) games with your friends.
   version: "1.0.0"
@@ -15,7 +15,7 @@ paths:
   /gc/{gameName}:
     get:
       operationId: getGame
-      summary: Get an game by name
+      summary: Get games full description
       description: |
         This is the endpoint to fetch offers per brand
       security:
@@ -52,7 +52,7 @@ paths:
           description: Unexpected error
           schema:
             $ref: "#/definitions/Error"
-    put:
+    post:
       operationId: createGame
       summary: Adds a game to the collection
       parameters:
@@ -72,6 +72,74 @@ paths:
             The response contains a given full description of the game
           schema:
             $ref: "#/definitions/Game"
+        502:
+          description: |
+            Received an invalid response from the upstream server
+          schema:
+            $ref: "#/definitions/Error"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+    put:
+      operationId: editGame
+      summary: Updates a game in the collection
+      parameters:
+        - name: gameName
+          in: path
+          description: The games name
+          required: true
+          type: string
+        - name: "genre"
+          in: query
+          description: "describes the games genre"
+          required: false
+          type: string
+      responses:
+        200:
+          description: |
+            The response contains a given full description of the game
+          schema:
+            $ref: "#/definitions/Game"
+        404:
+          description: |
+            The to be updated game was not found
+          schema:
+            $ref: "#/definitions/Error"
+        502:
+          description: |
+            Received an invalid response from the upstream server
+          schema:
+            $ref: "#/definitions/Error"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteGame
+      summary: Updates a game in the collection
+      parameters:
+        - name: gameName
+          in: path
+          description: The games name
+          required: true
+          type: string
+        - name: "genre"
+          in: query
+          description: "describes the games genre"
+          required: false
+          type: string
+      responses:
+        200:
+          description: |
+            The response contains a given full description of the game
+          schema:
+            $ref: "#/definitions/Game"
+        404:
+          description: |
+            The to be updated game was not found
+          schema:
+            $ref: "#/definitions/Error"
         502:
           description: |
             Received an invalid response from the upstream server
@@ -117,6 +185,8 @@ definitions:
         type: string
       genre:
         type: string
+      links:
+        $ref: "#/definitions/Links"
   MinMax:
     type: object
     properties:
@@ -136,3 +206,16 @@ definitions:
         properties:
           message:
             type: string
+  Links:
+    type: array
+    items:
+      $ref: '#/definitions/Link'
+  Link:
+    type: object
+    required:
+      - href
+    properties:
+      href:
+        type: string
+      rel:
+        type: string
