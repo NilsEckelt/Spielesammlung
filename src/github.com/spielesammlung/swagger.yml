@@ -1,0 +1,109 @@
+swagger: "2.0"
+info:
+  title: Spielesammlung (game collection)
+  description: |
+    This service supports organising weekends playing (board) games with your friends.
+  version: "0.1.0"
+# the domain of the s ervice
+host: ecke.lt:54321
+# array of all schemes that your API supports
+schemes:
+  - http
+produces:
+  - application/json
+paths:
+  /gc/{game name}/:
+    get:
+      operationId: getGame
+      summary: Get an game by name
+      description: |
+        This is the endpoint to fetch offers per brand
+      security:
+        - basicAuth: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: "game name"
+          in: path
+          description: The games name
+          required: true
+          type: string
+      tags:
+        - Game
+      responses:
+        200:
+          description: |
+            The response contains a given full description of the game
+          schema:
+            $ref: "#/definitions/Game"
+        404:
+          description: |
+            The requested game was not found
+          schema:
+            $ref: "#/definitions/Error"
+        502:
+          description: |
+            Received an invalid response from the upstream server
+          schema:
+            $ref: "#/definitions/Error"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  /health:
+    get:
+      operationId: getHealth
+      summary: A health endpoint
+      description: |
+        This endpoint returns the health of the api. It returns
+        HTTP_OK without any body.
+      tags:
+        - Health
+      responses:
+        200:
+          description: The booking service is up and runnin
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: HTTP Basic Authentication.
+definitions:
+  Game:
+    type: object
+    required:
+      - name
+      - player
+      - time
+      - owner
+      - genre
+    properties:
+      name:
+        type: string
+      player:
+        $ref: "#/definitions/MinMax"
+      time:
+        $ref: "#/definitions/MinMax"
+      owner:
+        type: string
+      genre:
+        type: string
+  MinMax:
+    type: object
+    properties:
+      min:
+        type: integer
+      max:
+        type: integer
+  Error:
+    type: object
+    required:
+      - error
+    properties:
+      error:
+        type: object
+        required:
+          - message
+        properties:
+          message:
+            type: string
