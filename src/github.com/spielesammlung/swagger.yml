@@ -3,7 +3,7 @@ info:
   title: Spielesammlung (game collection)
   description: |
     This service supports organising weekends playing (board) games with your friends.
-  version: "0.1.0"
+  version: "1.0.0"
 # the domain of the s ervice
 host: ecke.lt:54321
 # array of all schemes that your API supports
@@ -12,7 +12,7 @@ schemes:
 produces:
   - application/json
 paths:
-  /gc/{game name}/:
+  /gc/{gameName}:
     get:
       operationId: getGame
       summary: Get an game by name
@@ -25,7 +25,7 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: "game name"
+        - name: gameName
           in: path
           description: The games name
           required: true
@@ -43,6 +43,35 @@ paths:
             The requested game was not found
           schema:
             $ref: "#/definitions/Error"
+        502:
+          description: |
+            Received an invalid response from the upstream server
+          schema:
+            $ref: "#/definitions/Error"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+    put:
+      operationId: createGame
+      summary: Adds a game to the collection
+      parameters:
+        - name: gameName
+          in: path
+          description: The games name
+          required: true
+          type: string
+        - name: "genre"
+          in: query
+          description: "describes the games genre"
+          required: false
+          type: string
+      responses:
+        200:
+          description: |
+            The response contains a given full description of the game
+          schema:
+            $ref: "#/definitions/Game"
         502:
           description: |
             Received an invalid response from the upstream server

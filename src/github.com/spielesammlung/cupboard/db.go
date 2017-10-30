@@ -3,6 +3,8 @@ package cupboard
 import (
 	"log"
 
+	"github.com/byuoitav/hateoas"
+
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -13,11 +15,12 @@ type MinMax struct {
 }
 
 type Game struct {
-	Name   string `json:"name"`
-	Player MinMax `json:"player"`
-	Time   MinMax `json:"time"`
-	Owner  string `json:"owner"`
-	Genre  string `json:"genre"`
+	Links  []hateoas.Link `json:"links,omitempty"`
+	Name   string         `json:"name"`
+	Player MinMax         `json:"player"`
+	Time   MinMax         `json:"time"`
+	Owner  string         `json:"owner"`
+	Genre  string         `json:"genre"`
 }
 
 type Db struct {
@@ -50,18 +53,33 @@ func (db *Db) AddGame(game Game) {
 }
 
 func (db *Db) RetrieveGames() []Game {
-	result := []Game{}
+	gameCollection := []Game{}
 
 	c := db.session.DB("test").C("games")
-	err := c.Find(bson.M{}).All(&result)
+	err := c.Find(bson.M{}).All(&gameCollection)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return result
+	for i := 0; i < len(gameCollection); i++ {
+		log.Println("Adding links for %s...", gameCollection[i].Name)
+		links, err := hateoas.AddLinks("/gc", []string{gameCollection[i].Name})
+		if err != nil {
+			log.Fatal(err)
+		}
+		gameCollection[i].Links = links
+	}
+
+	return gameCollection
 }
-func (db *Db) GetGame(id string) Game {
-	return Game{}
+func (db *Db) GetGame(name string) Game {
+	game := Game{}
+	// links, err := hateoas.AddLinks(c, []string{game})
+	// if err != nil {
+	// 	return c.JSON(http.StatusBadRequest, helpers.ReturnError(err))
+	// }
+	// game.Links = links
+	return game
 }
-func (db *Db) CreateGame(id string) {}
-func (db *Db) DeleteGame(id string) {}
+func (db *Db) CreateGame(name string) {}
+func (db *Db) DeleteGame(name string) {}
